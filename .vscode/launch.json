@@ -1,0 +1,24 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--dataroot", "./datasets/font",
+                "--model", "font_translator_gan",
+                "--name", "test_new_dataset",
+                "--no_dropout",
+                "--gpu_ids", "0",
+                "--batch_size", "56",
+            ]
+        }
+    ]
+}
