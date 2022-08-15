@@ -8,11 +8,15 @@ import torch.nn.functional as F
 # from https://github.com/jorge-pessoa/pytorch-msssim
 ###############################################################################
 
+
 def gaussian(window_size, sigma):
     gauss = torch.Tensor(
-        [exp(-(x - window_size//2)**2/float(2*sigma**2)) for x in range(window_size)]
+        [
+            exp(-((x - window_size // 2) ** 2) / float(2 * sigma**2))
+            for x in range(window_size)
+        ]
     )
-    return gauss/gauss.sum()
+    return gauss / gauss.sum()
 
 
 def create_window(window_size, channel=1):
@@ -22,7 +26,15 @@ def create_window(window_size, channel=1):
     return window
 
 
-def ssim(img1, img2, window_size=11, window=None, size_average=True, full=False, val_range=None):
+def ssim(
+    img1,
+    img2,
+    window_size=11,
+    window=None,
+    size_average=True,
+    full=False,
+    val_range=None,
+):
     # Value range can be different from 255. Other common ranges are 1 (sigmoid) and 2 (tanh).
     if val_range is None:
         if torch.max(img1) > 128:
@@ -74,17 +86,32 @@ def ssim(img1, img2, window_size=11, window=None, size_average=True, full=False,
     return ret
 
 
-def msssim(img1, img2, weights=None, window_size=11, window=None, size_average=True,
-           val_range=None, normalize=False):
+def msssim(
+    img1,
+    img2,
+    weights=None,
+    window_size=11,
+    window=None,
+    size_average=True,
+    val_range=None,
+    normalize=False,
+):
     if weights is None:
-        weights = torch.FloatTensor([0.0448, 0.2856, 0.3001, 0.2363, 0.1333]).to(img1.device)
+        weights = torch.FloatTensor([0.0448, 0.2856, 0.3001, 0.2363, 0.1333]).to(
+            img1.device
+        )
     levels = weights.size(0)
     mssim = []
     mcs = []
     for _ in range(levels):
         sim, cs = ssim(
-            img1, img2, window_size=window_size, window=window, size_average=size_average,
-            full=True, val_range=val_range
+            img1,
+            img2,
+            window_size=window_size,
+            window=window,
+            size_average=size_average,
+            full=True,
+            val_range=val_range,
         )
         mssim.append(sim)
         mcs.append(cs)
@@ -100,8 +127,8 @@ def msssim(img1, img2, weights=None, window_size=11, window=None, size_average=T
         mssim = (mssim + 1) / 2
         mcs = (mcs + 1) / 2
 
-    pow1 = mcs ** weights
-    pow2 = mssim ** weights
+    pow1 = mcs**weights
+    pow2 = mssim**weights
     # From Matlab implementation https://ece.uwaterloo.ca/~z70wang/research/iwssim/
     output = torch.prod(pow1[:-1] * pow2[-1])
     return output
@@ -117,20 +144,31 @@ class SSIM(torch.nn.Module):
         self.channel = channel
 
         window = create_window(window_size, channel)
-        self.register_buffer('window', window)
+        self.register_buffer("window", window)
 
     def forward(self, img1, img2):
         assert self.channel == img1.size(1)
 
         return ssim(
-            img1, img2, window=self.window, window_size=self.window_size,
-            size_average=self.size_average, val_range=self.val_range
+            img1,
+            img2,
+            window=self.window,
+            window_size=self.window_size,
+            size_average=self.size_average,
+            val_range=self.val_range,
         )
 
 
 class MSSSIM(torch.nn.Module):
-    def __init__(self, weights=None, window_size=11, size_average=True, val_range=None, channel=1,
-                 normalize=False):
+    def __init__(
+        self,
+        weights=None,
+        window_size=11,
+        size_average=True,
+        val_range=None,
+        channel=1,
+        normalize=False,
+    ):
         super(MSSSIM, self).__init__()
         self.window_size = window_size
         self.size_average = size_average
@@ -140,14 +178,19 @@ class MSSSIM(torch.nn.Module):
 
         if weights is None:
             weights = [0.0448, 0.2856, 0.3001, 0.2363, 0.1333]
-        self.register_buffer('weights', torch.as_tensor(weights))
+        self.register_buffer("weights", torch.as_tensor(weights))
         window = create_window(window_size, channel)
-        self.register_buffer('window', window)
+        self.register_buffer("window", window)
 
     def forward(self, img1, img2):
         assert img1.size(1) == self.channel
         return msssim(
-            img1, img2, weights=self.weights,
-            window_size=self.window_size, window=self.window, size_average=self.size_average,
-            val_range=self.val_range, normalize=self.normalize
+            img1,
+            img2,
+            weights=self.weights,
+            window_size=self.window_size,
+            window=self.window,
+            size_average=self.size_average,
+            val_range=self.val_range,
+            normalize=self.normalize,
         )
