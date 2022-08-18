@@ -40,7 +40,9 @@ class FontDataset(Dataset):
         self.style_folder = subset_folder / style_language
         self.content_folder = subset_folder / "source"
 
-        self.gt_list = get_pickle_file_list(self.gt_folder, self.gt_folder / "list_files.pkl")
+        self.gt_list = get_pickle_file_list(
+            self.gt_folder, self.gt_folder / "list_files.pkl"
+        )
 
         self.style_channel = style_channel
         self.img_size = img_size

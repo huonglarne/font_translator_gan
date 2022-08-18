@@ -2,6 +2,7 @@ from torch import nn
 import torch
 from torch.nn import Module
 
+
 class GANLoss(Module):
     """Define different GAN objectives.
 

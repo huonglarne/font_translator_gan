@@ -2,6 +2,7 @@ from torch.nn import Module
 import torch
 from torch import nn
 
+
 class ResnetBlock(nn.Module):
     """Define a Resnet block"""
 

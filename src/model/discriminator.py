@@ -4,6 +4,7 @@ from torch.nn.utils import spectral_norm
 
 import functools
 
+
 class NLayerDiscriminatorS(Module):
     """Defines a PatchGAN discriminator"""
 
