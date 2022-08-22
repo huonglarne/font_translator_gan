@@ -7,7 +7,7 @@ import torchvision.transforms as transforms
 from torch.utils.data import Dataset
 from PIL import Image
 
-from src.constants import (
+from config import (
     IMG_SIZE,
     STYLE_CHANNEL,
     TRAIN_PATH,

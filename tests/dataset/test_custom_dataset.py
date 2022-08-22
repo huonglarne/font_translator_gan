@@ -1,6 +1,6 @@
 from tqdm import tqdm
 
-from src.constants import IMG_SIZE, STYLE_CHANNEL
+from config import IMG_SIZE, STYLE_CHANNEL
 from src.dataset.custom_dataset import FontDataset
 
 

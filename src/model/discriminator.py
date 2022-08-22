@@ -1,6 +1,7 @@
 from torch.nn import Module
 from torch import nn
 from torch.nn.utils import spectral_norm
+from torch.nn import BatchNorm2d
 
 import functools
 
@@ -8,7 +9,7 @@ import functools
 class NLayerDiscriminatorS(Module):
     """Defines a PatchGAN discriminator"""
 
-    def __init__(self, input_nc, ndf=64, n_layers=2, norm_layer=nn.BatchNorm2d):
+    def __init__(self, input_nc, ndf=64, n_layers=2, norm_layer=functools.partial(BatchNorm2d, affine=True, track_running_stats=True)):
         """Construct a PatchGAN discriminator
 
         Parameters:
